@@ -8,3 +8,30 @@ services:
       - ACCEPT_EULA=Y
       - MSSQL_SA_PASSWORD=${SQL_PASSWORD}
     platform: linux/amd64
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+      - ./scripts:/scripts
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "${SQL_PASSWORD}" -C -Q "SELECT 1" 2>/dev/null
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  migrate:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    environment:
+      - SQL_PASSWORD=${SQL_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - SQL_HOST=sqlserver
+    volumes:
+      - ./scripts:/scripts
+    command: /bin/bash /scripts/run_migrations.sh
+    restart: on-failure
+
+volumes:
+  sqlserver_data:
