@@ -3,3 +3,6 @@
 
 # macOS
 .DS_Store
+
+# File CSV data (lớn, không commit lên GitHub)
+scripts/*.csv
