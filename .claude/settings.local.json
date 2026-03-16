@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(chmod +x \"/Users/trung.nguyen/Documents/PERSONAL/SQL Server/SQL Tutorial/scripts/run_migrations.sh\")"
+      "Bash(chmod +x \"/Users/trung.nguyen/Documents/PERSONAL/SQL Server/SQL Tutorial/scripts/run_migrations.sh\")",
+      "Bash(docker compose:*)"
     ]
   }
 }
