@@ -23,3 +23,8 @@ GO
 
 -- Task 5: List Members Who Have Issued More Than One Book
 -- Objective: Use GROUP BY to find members who have issued more than one book.
+SELECT m.member_name, i.issued_member_id, COUNT(i.issued_id) AS total_books_issued
+FROM [dbo].[Issued_status] i JOIN [dbo].[Members] m ON m.member_id = i.issued_member_id
+GROUP BY m.member_name, i.issued_member_id
+HAVING COUNT(i.issued_id) > 1
+GO
