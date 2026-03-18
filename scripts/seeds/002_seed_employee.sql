@@ -11,6 +11,6 @@ WITH (
     FORMAT          = 'CSV',
     FIRSTROW        = 2,
     FIELDTERMINATOR = ',',
-    ROWTERMINATOR   = '\n',
+    ROWTERMINATOR   = '\r\n',
     TABLOCK
 );
