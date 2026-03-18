@@ -5,7 +5,8 @@
       "Bash(docker compose:*)",
       "Bash(make history:*)",
       "Bash(docker exec:*)",
-      "Bash(make reset:*)"
+      "Bash(make reset:*)",
+      "Bash(xxd \"/Users/trung.nguyen/Documents/PERSONAL/SQL Server/SQL Tutorial/scripts/issued_status.csv\")"
     ]
   }
 }

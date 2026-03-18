@@ -29,3 +29,38 @@ CREATE TABLE [dbo].[Books]
     [publisher] VARCHAR(30)
 )
 GO
+
+CREATE TABLE [dbo].[Members]
+(
+    [member_id] VARCHAR(10) PRIMARY KEY,
+    [member_name] VARCHAR(30),
+    [member_address] VARCHAR(30),
+    [reg_date] DATE
+)
+GO
+
+CREATE TABLE [dbo].[Issued_status]
+(
+    [issued_id] VARCHAR(10) PRIMARY KEY,
+    [issued_member_id] VARCHAR(10),
+    [issued_book_name] VARCHAR(80),
+    [issued_date] DATE,
+    [issued_book_isbn] VARCHAR(50),
+    [issued_emp_id] VARCHAR(10),
+    FOREIGN KEY (issued_member_id) REFERENCES [dbo].[Members](member_id),
+    FOREIGN KEY (issued_emp_id) REFERENCES [dbo].[Employees](emp_id),
+    FOREIGN KEY (issued_book_isbn) REFERENCES [dbo].[Books](isbn) 
+);
+GO
+
+CREATE TABLE [dbo].[Return_status]
+(
+    [return_id] VARCHAR(10) PRIMARY KEY,
+    [issued_id] VARCHAR(30),
+    [return_book_name] VARCHAR(80),
+    [return_date] DATE,
+    [return_book_isbn] VARCHAR(50),
+    FOREIGN KEY (return_book_isbn) REFERENCES [dbo].[Books](isbn)
+);
+
+GO
