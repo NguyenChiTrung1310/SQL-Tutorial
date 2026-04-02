@@ -17,12 +17,12 @@ GO
 -- sap xep theo gia thue tang dan.
 -- ------------------------------------------------------------
 -- [VIET QUERY O DAY]
-SELECT * FROM [dbo].[Books]
-WHERE [category] = 'Classic'
-ORDER BY [rental_price] ASC
+SELECT * FROM Books
+WHERE category = 'Classic'
+ORDER BY rental_price ASC
 -- DAP AN:
 -- SELECT book_title, author, rental_price
--- FROM [dbo].[Books]
+-- FROM Books]
 -- WHERE category = 'Classic'
 -- ORDER BY rental_price ASC;
 GO
@@ -32,12 +32,12 @@ GO
 -- ------------------------------------------------------------
 -- [VIET QUERY O DAY]
 SELECT category, COUNT(*) AS total_books
-FROM [dbo].[Books]
+FROM Books
 GROUP BY category
 
 -- DAP AN:
 -- SELECT category, COUNT(*) AS total_books
--- FROM [dbo].[Books]
+-- FROM Books]
 -- GROUP BY category
 -- ORDER BY total_books DESC;
 GO
@@ -47,11 +47,11 @@ GO
 -- ------------------------------------------------------------
 -- [VIET QUERY O DAY]
 SELECT e.emp_name, b.branch_address
-FROM [dbo].[Employees] e INNER JOIN [dbo].[Branch] b ON e.branch_id = b.branch_id;
+FROM Employees e INNER JOIN Branch b ON e.branch_id = b.branch_id;
 -- DAP AN:
 -- SELECT e.emp_name, e.position, b.branch_address
--- FROM [dbo].[Employees] e
--- INNER JOIN [dbo].[Branch] b ON e.branch_id = b.branch_id;
+-- FROM Employees] e
+-- INNER JOIN Branch] b ON e.branch_id = b.branch_id;
 GO
 
 -- ============================================================
@@ -64,14 +64,14 @@ GO
 -- ------------------------------------------------------------
 -- [VIET QUERY O DAY]
 SELECT b.branch_id, b.branch_address, COUNT(e.emp_id) AS total_employees
-FROM [dbo].[Branch] b JOIN [dbo].[Employees] e ON b.branch_id = e.branch_id
+FROM Branch b JOIN Employees e ON b.branch_id = e.branch_id
 GROUP BY b.branch_id, b.branch_address
 HAVING COUNT(e.emp_id) > 2
 
 -- DAP AN:
 -- SELECT b.branch_id, b.branch_address, COUNT(e.emp_id) AS total_employees
--- FROM [dbo].[Branch] b
--- INNER JOIN [dbo].[Employees] e ON b.branch_id = e.branch_id
+-- FROM Branch] b
+-- INNER JOIN Employees] e ON b.branch_id = e.branch_id
 -- GROUP BY b.branch_id, b.branch_address
 -- HAVING COUNT(e.emp_id) > 2;
 GO
@@ -82,13 +82,13 @@ GO
 -- ------------------------------------------------------------
 -- [VIET QUERY O DAY]
 SELECT emp_name, salary
-FROM [dbo].[Employees]
-WHERE salary > (SELECT AVG(salary) FROM [dbo].[Employees])
+FROM Employees
+WHERE salary > (SELECT AVG(salary) FROM Employees)
 
 -- DAP AN:
 -- SELECT emp_name, position, salary
--- FROM [dbo].[Employees]
--- WHERE salary > (SELECT AVG(salary) FROM [dbo].[Employees])
+-- FROM Employees]
+-- WHERE salary > (SELECT AVG(salary) FROM Employees])
 -- ORDER BY salary DESC;
 GO
 
@@ -98,12 +98,12 @@ GO
 -- ------------------------------------------------------------
 -- [VIET QUERY O DAY]
 SELECT b.branch_address, SUM(e.salary) AS total_salary, AVG(e.salary) AS avg_salary
-FROM [dbo].[Branch] b JOIN [dbo].[Employees] E on b.branch_id = e.branch_id
+FROM Branch b JOIN Employees E on b.branch_id = e.branch_id
 GROUP BY b.branch_address
 -- DAP AN:
 -- SELECT b.branch_address, SUM(e.salary) AS total_salary, AVG(e.salary) AS avg_salary
--- FROM [dbo].[Branch] b
--- INNER JOIN [dbo].[Employees] e ON b.branch_id = e.branch_id
+-- FROM Branch] b
+-- INNER JOIN Employees] e ON b.branch_id = e.branch_id
 -- GROUP BY b.branch_id, b.branch_address
 -- ORDER BY total_salary DESC;
 GO
@@ -115,21 +115,21 @@ GO
 -- [VIET QUERY O DAY]
 WITH HistoryAvg AS (
   SELECT AVG(rental_price) AS avg_price
-  FROM [dbo].[Books]
+  FROM Books
   WHERE category = 'HISTORY'
 )
 
 SELECT book_title, category, rental_price, (SELECT avg_price FROM HistoryAvg) AS avg_history_price
-FROM [dbo].[Books]
+FROM Books
 WHERE category = 'HISTORY' AND rental_price > (SELECT avg_price FROM HistoryAvg)
 GROUP BY book_title, category, rental_price
 
 -- DAP AN:
 -- SELECT book_title, category, rental_price
--- FROM [dbo].[Books]
+-- FROM Books]
 -- WHERE rental_price > (
 --     SELECT AVG(rental_price)
---     FROM [dbo].[Books]
+--     FROM Books]
 --     WHERE category = 'History'
 -- )
 -- ORDER BY rental_price DESC;
@@ -148,7 +148,7 @@ CASE
   WHEN salary BETWEEN 45000 AND 60000 THEN 'Mid'
   ELSE 'High'
 END AS salary_level
-FROM [dbo].[Employees]
+FROM Employees
 
 -- DAP AN:
 -- SELECT emp_name, salary,
@@ -157,7 +157,7 @@ FROM [dbo].[Employees]
 --         WHEN salary BETWEEN 45000 AND 60000 THEN 'Mid'
 --         ELSE 'High'
 --     END AS salary_level
--- FROM [dbo].[Employees]
+-- FROM Employees]
 -- ORDER BY salary DESC;
 GO
 
@@ -169,7 +169,7 @@ GO
 
 -- DAP AN:
 -- SELECT category, COUNT(*) AS available_books
--- FROM [dbo].[Books]
+-- FROM Books]
 -- WHERE status = 'yes'
 -- GROUP BY category
 -- HAVING COUNT(*) > 3
@@ -184,8 +184,8 @@ GO
 
 -- DAP AN:
 -- SELECT b.branch_id, b.branch_address, COUNT(e.emp_id) AS employee_count
--- FROM [dbo].[Branch] b
--- LEFT JOIN [dbo].[Employees] e ON b.branch_id = e.branch_id
+-- FROM Branch] b
+-- LEFT JOIN Employees] e ON b.branch_id = e.branch_id
 -- GROUP BY b.branch_id, b.branch_address
 -- ORDER BY employee_count DESC;
 GO
@@ -201,7 +201,7 @@ GO
 -- SELECT position, avg_salary
 -- FROM (
 --     SELECT position, AVG(salary) AS avg_salary
---     FROM [dbo].[Employees]
+--     FROM Employees]
 --     GROUP BY position
 -- ) AS salary_summary
 -- WHERE avg_salary > 50000
@@ -222,7 +222,7 @@ GO
 -- DAP AN:
 -- SELECT emp_name, branch_id, salary,
 --     RANK() OVER(PARTITION BY branch_id ORDER BY salary DESC) AS salary_rank
--- FROM [dbo].[Employees]
+-- FROM Employees]
 -- ORDER BY branch_id, salary_rank;
 GO
 
@@ -236,7 +236,7 @@ GO
 -- WITH RankedEmployees AS (
 --     SELECT emp_name, branch_id, salary, position,
 --         RANK() OVER(PARTITION BY branch_id ORDER BY salary DESC) AS rnk
---     FROM [dbo].[Employees]
+--     FROM Employees]
 -- )
 -- SELECT emp_name, branch_id, salary, position
 -- FROM RankedEmployees
@@ -263,7 +263,7 @@ GO
 --     END AS price_tier,
 --     COUNT(*) AS total_books,
 --     AVG(rental_price) AS avg_price
--- FROM [dbo].[Books]
+-- FROM Books]
 -- GROUP BY
 --     CASE
 --         WHEN rental_price <= 5.00 THEN 'Budget'
@@ -282,13 +282,13 @@ GO
 -- DAP AN:
 -- WITH BranchSalary AS (
 --     SELECT branch_id, SUM(salary) AS total_salary
---     FROM [dbo].[Employees]
+--     FROM Employees]
 --     GROUP BY branch_id
 -- )
 -- SELECT b.branch_address, bs.total_salary, e.emp_name AS manager_name
 -- FROM BranchSalary bs
--- INNER JOIN [dbo].[Branch] b ON bs.branch_id = b.branch_id
--- INNER JOIN [dbo].[Employees] e ON b.manager_id = e.emp_id
+-- INNER JOIN Branch] b ON bs.branch_id = b.branch_id
+-- INNER JOIN Employees] e ON b.manager_id = e.emp_id
 -- ORDER BY bs.total_salary DESC;
 GO
 

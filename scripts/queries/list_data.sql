@@ -1,18 +1,18 @@
--- SELECT * FROM [dbo].[Branch]
--- GO
-
-SELECT * FROM [dbo].[Books]
+SELECT * FROM Branch
 GO
 
-SELECT * FROM [dbo].[Employees]
+SELECT * FROM Books
 GO
 
--- SELECT * FROM [dbo].[Members]
--- GO
+SELECT * FROM Employees
+GO
 
--- SELECT * FROM [dbo].[Return_status]
--- GO
+SELECT * FROM Members
+GO
 
-SELECT * FROM [dbo].[Issued_status]
+SELECT * FROM Return_status
+GO
+
+SELECT * FROM Issued_status
 GO
 

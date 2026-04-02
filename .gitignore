@@ -1,5 +1,11 @@
 # Biến môi trường (chứa mật khẩu - KHÔNG commit)
 .env
 
+# IntelliJ IDEA files
+.idea/
+*.iml
+out/
+gen/
+
 # macOS
 .DS_Store
