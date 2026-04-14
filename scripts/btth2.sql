@@ -1,6 +1,11 @@
 CREATE DATABASE BTTH2_DB
 GO
 
+USE BTTH2_DB;
+
+-- PHẦN 1:
+-- 1.1: Viết các câu lệnh SQL tạo các quan hệ trên với các kiểu dữ liệu mô tả trong
+-- bảng sau (tạo các ràng buộc khóa chính, khóa ngoại tương ứng):
 CREATE TABLE SINHVIEN
 (
     MSSV char(8) PRIMARY KEY,
@@ -27,4 +32,272 @@ CREATE TABLE SV_DETAI
     FOREIGN KEY (MSDT) REFERENCES DETAI(MSDT)
 )
 GO
+
+CREATE TABLE HOCHAM
+(
+    MSHH int PRIMARY KEY,
+    TENHH nvarchar(20) NOT NULL
+)
+GO
+
+CREATE TABLE GIAOVIEN
+(
+    MSGV int PRIMARY KEY,
+    TENGV nvarchar(30) NOT NULL,
+    DIACHI nvarchar(50) NOT NULL,
+    SODT varchar(10) NOT NULL,
+    MSHH int,
+    NAMHH smalldatetime NOT NULL,
+    FOREIGN KEY (MSHH) REFERENCES HOCHAM(MSHH)
+)
+GO
+
+CREATE TABLE HOCVI
+(
+    MSHV int PRIMARY KEY,
+    TENHV nvarchar(20) NOT NULL
+)
+GO
+
+CREATE TABLE CHUYENNGANH
+(
+    MSCN int PRIMARY KEY,
+    TENCN nvarchar(30) NOT NULL
+)
+GO
+
+CREATE TABLE GV_HV_CN
+(
+    MSGV int,
+    MSHV int,
+    MSCN int,
+    NAM smalldatetime NOT NULL,
+    PRIMARY KEY (MSGV, MSHV, MSCN),
+    FOREIGN KEY (MSGV) REFERENCES GIAOVIEN(MSGV),
+    FOREIGN KEY (MSHV) REFERENCES HOCVI(MSHV),
+    FOREIGN KEY (MSCN) REFERENCES CHUYENNGANH(MSCN)
+)
+GO
+
+CREATE TABLE GV_HDDT
+(
+    MSGV int,
+    MSDT char(6),
+    DIEM float NOT NULL,
+    PRIMARY KEY (MSGV, MSDT),
+    FOREIGN KEY (MSGV) REFERENCES GIAOVIEN(MSGV),
+    FOREIGN KEY (MSDT) REFERENCES DETAI(MSDT)
+)
+GO
+
+CREATE TABLE GV_PBDT
+(
+    MSGV int,
+    MSDT char(6),
+    DIEM float NOT NULL,
+    PRIMARY KEY (MSGV, MSDT),
+    FOREIGN KEY (MSGV) REFERENCES GIAOVIEN(MSGV),
+    FOREIGN KEY (MSDT) REFERENCES DETAI(MSDT)
+)
+GO
+
+CREATE TABLE GV_UVDT
+(
+    MSGV int,
+    MSDT char(6),
+    DIEM float NOT NULL,
+    PRIMARY KEY (MSGV, MSDT),
+    FOREIGN KEY (MSGV) REFERENCES GIAOVIEN(MSGV),
+    FOREIGN KEY (MSDT) REFERENCES DETAI(MSDT)
+)
+GO
+
+CREATE TABLE HOIDONG
+(
+    MSHD int PRIMARY KEY,
+    PHONG int,
+    TGBD smalldatetime,
+    NGAYHD smalldatetime NOT NULL,
+    TINHTRANG nvarchar(30) NOT NULL,
+    MSGV int,
+    FOREIGN KEY (MSGV) REFERENCES GIAOVIEN(MSGV)
+)
+GO
+
+CREATE TABLE HOIDONG_GV
+(
+    MSHD int,
+    MSGV int,
+    PRIMARY KEY (MSHD, MSGV),
+    FOREIGN KEY (MSHD) REFERENCES HOIDONG(MSHD),
+    FOREIGN KEY (MSGV) REFERENCES GIAOVIEN(MSGV)
+)
+GO
+
+CREATE TABLE HOIDONG_DT
+(
+    MSHD int,
+    MSDT char(6),
+    QUYETDINH nchar(10),
+    PRIMARY KEY (MSHD, MSDT),
+    FOREIGN KEY (MSHD) REFERENCES HOIDONG(MSHD),
+    FOREIGN KEY (MSDT) REFERENCES DETAI(MSDT)
+)
+GO
+
+-- 1.2: Insert dữ liệu vào CSDL:
+-- a) Table SINHVIEN
+INSERT INTO SINHVIEN VALUES 
+(13520001, N'Nguyễn Văn An', '0906762255', 'SE103.U32', N'THỦ ĐỨC'),
+(13520002, N'Phan Tấn Đạt', '0975672350', 'IE204.T21', N'QUẬN 1'),
+(13520003, N'Nguyễn Anh Hải', '0947578688', 'IE205.R12', N'QUẬN 9'),
+(13520004, N'Phạm Tài', '0956757869', 'IE202.A22', N'QUẬN 1'),
+(13520005, N'Lê Thúy Hằng', '0976668688', 'SE304.E22', N'THỦ ĐỨC'),
+(13520006, N'Ưng Hồng Ân', '0957475898', 'IE208.F33', N'QUẬN 2');
+GO
+
+-- b) Table DETAI
+INSERT INTO DETAI VALUES
+(97001, N'Quản lý thư viện'),
+(97002, N'Nhận dạng vân tay'),
+(97003, N'Bán đấu giá trên mạng'),
+(97004, N'Quản lý siêu thị'),
+(97005, N'Xử lý ảnh'),
+(97006, N'Hệ giải toán thông minh');
+GO
+
+-- c) Table SV_DETAI
+INSERT INTO SV_DETAI VALUES 
+(13520001, 97004),
+(13520002, 97005),
+(13520003, 97001),
+(13520004, 97002),
+(13520005, 97003),
+(13520006, 97005);
+GO
+
+-- d) Table HOCHAM
+INSERT INTO HOCHAM VALUES
+(1, N'PHÓ GIÁO SƯ'),
+(2, N'GIÁO SƯ');
+GO
+
+-- e) Table GIAOVIEN
+INSERT INTO GIAOVIEN VALUES
+(00201, N'Trần Trung', N'Bến Tre', '35353535', 1, '1996'),
+(00202, N'Nguyễn Văn An', N'Tiềng Giang', '67868688', 1, '1996'),
+(00203, N'Trần Thu Trang', N'Cần Thơ', '74758687', 1, '1996'),
+(00204, N'Nguyễn Thị Loan', N'TP. HCM', '56575868', 2, '2005'),
+(00205, N'Chu Tiến', N'Hà Nội', '46466646', 2, '2005');
+GO
+
+-- f) Table HOCVI
+INSERT INTO HOCVI VALUES
+(1, N'Kỹ sư'),
+(2, N'Cử nhân'),
+(3, N'Thạc sĩ'),
+(4, N'Tiến sĩ'),
+(5, N'Tiến sĩ Khoa học');
+GO
+
+-- g) Table CHUYENNGANH
+INSERT INTO CHUYENNGANH VALUES
+(1, N'Công nghệ Web'),
+(2, N'Mạng xã hội'),
+(3, N'Quản lý CNTT'),
+(4, N'GIS');
+GO
+
+-- h) Table GV_HV_CN
+INSERT INTO GV_HV_CN VALUES
+(00201, 1, 1, '2013'),
+(00201, 1, 2, '2013'),
+(00201, 2, 1, '2014'),
+(00202, 3, 2, '2013'),
+(00203, 2, 4, '2014'),
+(00204, 3, 2, '2014');
+GO
+
+-- i) Table GV_HDDT
+INSERT INTO GV_HDDT VALUES
+(00201, 97001, 8),
+(00202, 97002, 7),
+(00205, 97001, 9),
+(00204, 97004, 7),
+(00203, 97005, 9);
+GO
+
+-- j) Table GV_PBDT
+INSERT INTO GV_PBDT VALUES
+(00201, 97005, 8),
+(00202, 97001, 7),
+(00205, 97004, 9),
+(00204, 97003, 7),
+(00203, 97002, 9);
+GO
+
+-- k) Table GV_UVDT
+INSERT INTO GV_UVDT VALUES
+(00205, 97005, 8),
+(00202, 97005, 7),
+(00204, 97005, 9),
+(00203, 97001, 7),
+(00204, 97001, 9),
+(00205, 97001, 8),
+(00203, 97003, 7),
+(00201, 97003, 9),
+(00202, 97003, 7),
+(00201, 97004, 9),
+(00202, 97004, 8),
+(00203, 97004, 7),
+(00201, 97002, 9),
+(00204, 97002, 7),
+(00205, 97002, 9),
+(00201, 97006, 9),
+(00202, 97006, 7),
+(00204, 97006, 9);
+GO
+
+-- l) Table HOIDONG
+INSERT INTO HOIDONG VALUES
+(1, 002, '07:00', '2014/11/29', N'Thật', 00201),
+(2, 102, '07:00', '2014/12/05', N'Thật', 00202),
+(3, 003, '08:00', '2014/12/06', N'Thật', 00203);
+GO
+
+-- m) HOIDONG_GV
+INSERT INTO HOIDONG_GV VALUES
+(1, 00201),
+(1, 00202),
+(1, 00203),
+(1, 00204),
+(2, 00203),
+(2, 00202),
+(2, 00205),
+(2, 00204),
+(3, 00201),
+(3, 00202),
+(3, 00203),
+(3, 00204);
+GO
+
+-- n) HOIDONG_DT
+INSERT INTO HOIDONG_DT VALUES
+(1, 97001, N'Được'),
+(1, 97002, N'Được'),
+(2, 97001, N'Không'),
+(2, 97004, N'Không'),
+(1, 97005, N'Được'),
+(3, 97001, N'Không'),
+(3, 97002, N'Được');
+GO
+
+
+
+
+
+
+
+
+
 
