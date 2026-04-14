@@ -42,18 +42,18 @@ CREATE PROC usp_InsertGiaoVien_2A_2
     @NAMHH smalldatetime
 )
 AS
-BEGIN
-    IF EXISTS (SELECT 1 FROM GIAOVIEN WHERE MSGV = @MSGV)
     BEGIN
-        print(N'Mã giáo viên đã tồn tại!')
-        RETURN 0
+        IF EXISTS (SELECT 1 FROM GIAOVIEN WHERE MSGV = @MSGV)
+        BEGIN
+            print(N'Mã giáo viên đã tồn tại!')
+            RETURN 0
+        END
+
+        INSERT INTO GIAOVIEN (MSGV, TENGV, DIACHI, SODT, MSHH, NAMHH)
+        VALUES (@MSGV, @TENGV, @DIACHI, @SODT, @MSHH, @NAMHH)
+
+        RETURN 1
     END
-
-    INSERT INTO GIAOVIEN (MSGV, TENGV, DIACHI, SODT, MSHH, NAMHH)
-    VALUES (@MSGV, @TENGV, @DIACHI, @SODT, @MSHH, @NAMHH)
-
-    RETURN 1
-END
 GO
 
 -- 3. Giống (1) và (2) kiểm tra xem MSGV có trùng không? MSHH có tồn tại chưa? Nếu MSGV trùng thì trả về 0.
@@ -68,28 +68,45 @@ CREATE PROC usp_InsertGiaoVien_2A_3
     @NAMHH smalldatetime
 )
 AS
-BEGIN
-    IF EXISTS (SELECT 1 FROM GIAOVIEN WHERE MSGV = @MSGV)
     BEGIN
-        print(N'Mã giáo viên đã tồn tại!')
-        RETURN 0
+        IF EXISTS (SELECT 1 FROM GIAOVIEN WHERE MSGV = @MSGV)
+        BEGIN
+            print(N'Mã giáo viên đã tồn tại!')
+            RETURN 0
+        END
+
+        IF NOT EXISTS (SELECT 1 FROM HOCHAM WHERE MSHH = @MSHH)
+        BEGIN
+            print(N'Mã học hàm không tồn tại!')
+            RETURN 1
+        END
+
+        INSERT INTO GIAOVIEN (MSGV, TENGV, DIACHI, SODT, MSHH, NAMHH)
+        VALUES (@MSGV, @TENGV, @DIACHI, @SODT, @MSHH, @NAMHH)
+
+        RETURN 2
     END
-
-    IF NOT EXISTS (SELECT 1 FROM HOCHAM WHERE MSHH = @MSHH)
-    BEGIN
-        print(N'Mã học hàm không tồn tại!')
-        RETURN 1
-    END
-
-    INSERT INTO GIAOVIEN (MSGV, TENGV, DIACHI, SODT, MSHH, NAMHH)
-    VALUES (@MSGV, @TENGV, @DIACHI, @SODT, @MSHH, @NAMHH)
-
-    RETURN 2
-END
 GO
 
+-- 4. Đưa vào MSDT cũ, TENDT mới. Hãy cập nhật tên đề tài mới với mã đề tài cũ không đổi
+-- nếu không tìm thấy trả về 0, ngược lại cập nhật và trả về 1.
+CREATE PROC usp_UpdateTenDeTai_2A_4
+(
+    @MSDT char(6),
+    @TENDTMOI nvarchar(30)
+)
+AS
+    BEGIN
+        IF NOT EXISTS (SELECT 1 FROM DETAI WHERE @MSDT = MSDT)
+        BEGIN
+            print(N'Mã đề tài không tồn tại!')
+            RETURN 0
+        END
 
+        UPDATE DETAI
+        SET TENDT = @TENDTMOI
+        WHERE MSDT = @MSDT
 
-
-
-
+        RETURN 1
+    END
+GO
