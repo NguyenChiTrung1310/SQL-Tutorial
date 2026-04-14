@@ -29,6 +29,33 @@ AS
     END
 GO
 
+-- 2. Tham số vào là MSGV, TENGV, SODT, DIACHI, MSHH, NAMHH.
+-- Trước khi insert dữ liệu cần kiểm tra MSGV trong table GIAOVIEN có trùng
+-- không, nếu trùng thì trả về giá trị 0.
+CREATE PROC usp_InsertGiaoVien_2A_2
+(
+    @MSGV int,
+    @TENGV nvarchar(30),
+    @SODT varchar(10),
+    @DIACHI nvarchar(50),
+    @MSHH int,
+    @NAMHH smalldatetime
+)
+AS
+BEGIN
+    IF EXISTS (SELECT 1 FROM GIAOVIEN WHERE MSGV = @MSGV)
+    BEGIN
+        print(N'Mã giáo viên đã tồn tại!')
+        RETURN 0
+    END
+
+    INSERT INTO GIAOVIEN (MSGV, TENGV, DIACHI, SODT, MSHH, NAMHH)
+    VALUES (@MSGV, @TENGV, @DIACHI, @SODT, @MSHH, @NAMHH)
+
+    RETURN 1
+END
+GO
+
 
 
 
