@@ -110,3 +110,27 @@ AS
         RETURN 1
     END
 GO
+
+-- 5. Tham số đưa vào MSSV, TENSV mới, DIACHI mới. Hãy cập nhật sinh viên trên với MSSV không đổi,
+-- nếu không tìm thấy trả về 0, ngược lại cập nhật và trả về 1.
+CREATE PROC usp_UpdateThongTinSinhVien
+(
+  @MSSV char(8),
+  @TENSVMOI nvarchar(30),
+  @DIACHIMOI nchar(50)
+)
+AS
+    BEGIN
+        IF NOT EXISTS (SELECT 1 FROM SINHVIEN WHERE MSSV = @MSSV)
+        BEGIN
+            print(N'Mã sinh viên không tồn tại!')
+            RETURN 0
+        END
+
+        UPDATE SINHVIEN
+        SET TENSV = @TENSVMOI, DIACHI = @DIACHIMOI
+        WHERE MSSV = @MSSV
+
+        RETURN 1
+    END
+GO
