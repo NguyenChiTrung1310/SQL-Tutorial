@@ -160,7 +160,7 @@ AS
         FROM GV_HV_CN
         WHERE MSHV = @MSHV
 
-        PRINT CONCAT(N'Số GV thỏa học vị là ', @CountGV);
+        SELECT @CountGV AS SoGVThoaHocVi
         return @CountGV
     END
 GO
@@ -192,7 +192,7 @@ AS
         IF @DiemTB IS NULL
             SET @DiemTB = 0;
 
-        PRINT CONCAT(N'Điểm trung bình của đề tài là ', @DiemTB);
+        SELECT @DiemTB AS DiemTrungBinhCuaDeTai;
         RETURN 1;
     END
 GO
