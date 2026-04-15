@@ -90,7 +90,7 @@ GO
 
 -- 4. Đưa vào MSDT cũ, TENDT mới. Hãy cập nhật tên đề tài mới với mã đề tài cũ không đổi
 -- nếu không tìm thấy trả về 0, ngược lại cập nhật và trả về 1.
-CREATE PROC usp_UpdateTenDeTai_2A_4
+CREATE PROC usp_UpdateTenDeTai
 (
     @MSDT char(6),
     @TENDTMOI nvarchar(30)
