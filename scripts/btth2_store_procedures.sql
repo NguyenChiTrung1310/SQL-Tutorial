@@ -134,3 +134,49 @@ AS
         RETURN 1
     END
 GO
+
+-- B. STORED PROCEDURES VỚI THAM SỐ VÀO VÀ RA
+-- 1. Đưa vào TENHV trả ra: Số GV thỏa học vị, nếu không tìm thấy trả về 0.
+CREATE PROC usp_CountGiaoVienByHocVi
+(
+    @TENHV nvarchar(20)
+)
+AS
+    BEGIN
+        DECLARE @MSHV INT;
+        DECLARE @CountGV int;
+
+        SELECT @MSHV = MSHV
+        FROM HOCVI
+        WHERE LOWER(TRIM(TENHV)) = LOWER(TRIM(@TENHV));
+
+        IF @MSHV IS NULL
+            BEGIN
+                print(N'Tên học vị không tồn tại!')
+                RETURN 0;
+            END
+
+        SELECT @CountGV = COUNT(DISTINCT MSGV)
+        FROM GV_HV_CN
+        WHERE MSHV = @MSHV
+
+        PRINT CONCAT(N'Số GV thỏa học vị là ', @CountGV);
+        return @CountGV
+    END
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
