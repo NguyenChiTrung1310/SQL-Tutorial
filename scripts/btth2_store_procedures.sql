@@ -262,4 +262,36 @@ AS
     END
 GO
 
+-- 5. Đưa vào TENGV cho biết: Số đề tài hướng dẫn, số đề tài phản biện do giáo viên đó phụ trách.
+-- Nếu trùng tên thì có báo lỗi không hay hệ thống sẽ đếm tất cả các đề tài của những giáo viên trùng tên đó?
+CREATE PROC usp_SoDeTaiHuongDanVaPhanBienByGV
+(
+    @TENGV nvarchar(30)
+)
+AS
+    DECLARE @CountGV INT;
+    BEGIN
+        SELECT @CountGV = COUNT(*)
+        FROM GIAOVIEN
+        WHERE LOWER(TRIM(TENGV)) = LOWER(TRIM(@TENGV));
 
+        IF @CountGV < 1
+            BEGIN
+                print(N'Không tìm thấy giáo viên nào!')
+                RETURN 0
+            END
+
+        SELECT
+            gv.MSGV,
+            gv.TENGV,
+            COUNT(DISTINCT h.MSDT) AS SoDetaiHuongDan,
+            COUNT(DISTINCT p.MSDT) AS SoDetaiPhanBien
+        FROM GIAOVIEN gv
+                 LEFT JOIN GV_HDDT h ON gv.MSGV = h.MSGV
+                 LEFT JOIN GV_PBDT p ON gv.MSGV = p.MSGV
+        WHERE LOWER(TRIM(gv.TENGV)) = LOWER(TRIM(@TENGV))
+        GROUP BY gv.MSGV, gv.TENGV;
+
+        return 1;
+    END
+GO
