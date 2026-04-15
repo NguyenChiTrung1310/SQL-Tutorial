@@ -230,5 +230,36 @@ AS
     END
 GO
 
+-- 4. Đưa vào MSHD cho biết: Điểm trung bình các đề tài của hội đồng đó.
+CREATE PROC usp_GetDiemTrungBinhDeTaiByMSHD
+(
+    @MSHD int
+)
+AS
+    BEGIN
+        DECLARE @DiemTB FLOAT;
+
+        IF NOT EXISTS (SELECT 1 FROM HOIDONG WHERE MSHD = @MSHD)
+            BEGIN
+                print(N'Mã hội đồng không tồn tại!')
+                RETURN 0
+            END
+
+        SELECT @DiemTB = CAST(AVG(DIEM) AS DECIMAL(5,2))
+        FROM (
+                 SELECT DIEM FROM GV_HDDT WHERE MSDT IN (SELECT MSDT FROM HOIDONG_DT WHERE MSHD = @MSHD)
+                 UNION ALL
+                 SELECT DIEM FROM GV_PBDT WHERE MSDT IN (SELECT MSDT FROM HOIDONG_DT WHERE MSHD = @MSHD)
+                 UNION ALL
+                 SELECT DIEM FROM GV_UVDT WHERE MSDT IN (SELECT MSDT FROM HOIDONG_DT WHERE MSHD = @MSHD)
+             ) AS DiemDeTai;
+
+        IF @DiemTB IS NULL
+            SET @DiemTB = 0;
+
+        SELECT @DiemTB AS DiemTrungBinhCuacCacDeTaiCuaHoiDong;
+        RETURN 1;
+    END
+GO
 
 
