@@ -193,7 +193,7 @@ AS
             SET @DiemTB = 0;
 
         PRINT CONCAT(N'Điểm trung bình của đề tài là ', @DiemTB);
-        RETURN @DiemTB;
+        RETURN 1;
     END
 GO
 
@@ -225,11 +225,10 @@ AS
         SELECT MSGV, TENGV, SODT
         FROM GIAOVIEN
         WHERE LOWER(TRIM(TENGV)) = LOWER(TRIM(@TENGV));
+
+        RETURN 1
     END
 GO
-
-
-
 
 
 
