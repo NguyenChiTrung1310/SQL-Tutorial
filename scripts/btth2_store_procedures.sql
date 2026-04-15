@@ -165,10 +165,37 @@ AS
     END
 GO
 
+-- 2. Đưa vào MSDT cho biết: Điểm trung bình của đề tài, nếu không tìm thấy trả về 0
+CREATE PROC usp_GetDiemTrungBinhByMSDT
+(
+    @MSDT char(6)
+)
+AS
+    BEGIN
+        DECLARE @DiemTB FLOAT;
 
+        IF NOT EXISTS (SELECT 1 FROM DETAI WHERE MSDT = @MSDT)
+            BEGIN
+                print(N'Mã số đề tài không tồn tại!')
+                RETURN 0
+            END
 
+        SELECT @DiemTB = CAST(AVG(DIEM) AS DECIMAL(5,2))
+        FROM (
+                 SELECT DIEM FROM GV_HDDT WHERE MSDT = @MSDT
+                 UNION ALL
+                 SELECT DIEM FROM GV_PBDT WHERE MSDT = @MSDT
+                 UNION ALL
+                 SELECT DIEM FROM GV_UVDT WHERE MSDT = @MSDT
+             ) AS DiemDeTai;
 
+        IF @DiemTB IS NULL
+            SET @DiemTB = 0;
 
+        PRINT CONCAT(N'Điểm trung bình của đề tài là ', @DiemTB);
+        RETURN @DiemTB;
+    END
+GO
 
 
 
