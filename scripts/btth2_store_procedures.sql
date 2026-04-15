@@ -197,10 +197,36 @@ AS
     END
 GO
 
+-- 3. Đưa vào TENGV trả ra: SDT của giáo viên đó, nếu không tìm thấy trả về 0.
+-- Nếu trùng tên thì có báo lỗi không? Tại sao? Làm sao để hiện thông báo có bao
+-- nhiêu giáo viên trùng tên và trả về các SDT.
+CREATE PROC usp_GetSDTByTenGV
+(
+    @TENGV nvarchar(30)
+)
+AS
+    DECLARE @CountGV INT;
+    BEGIN
+        SELECT @CountGV = COUNT(*)
+        FROM GIAOVIEN
+        WHERE LOWER(TRIM(TENGV)) = LOWER(TRIM(@TENGV));
 
+        IF @CountGV < 1
+            BEGIN
+                print(N'Không tìm thấy giáo viên nào!')
+                RETURN 0
+            END
 
+        IF @CountGV > 1
+            BEGIN
+                print CONCAT(N'Có ', @CountGV, N' giáo viên trùng tên!')
+            END
 
-
+        SELECT MSGV, TENGV, SODT
+        FROM GIAOVIEN
+        WHERE LOWER(TRIM(TENGV)) = LOWER(TRIM(@TENGV));
+    END
+GO
 
 
 
