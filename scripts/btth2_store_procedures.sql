@@ -19,13 +19,13 @@ AS
         IF NOT EXISTS (SELECT 1 FROM HOCHAM WHERE MSHH = @MSHH)
         BEGIN
             print(N'Mã học hàm không tồn tại!')
-            RETURN 0
+            RETURN 0;
         END
 
         INSERT INTO GIAOVIEN (MSGV, TENGV, DIACHI, SODT, MSHH, NAMHH)
         VALUES (@MSGV, @TENGV, @DIACHI, @SODT, @MSHH, @NAMHH)
 
-        RETURN 1
+        RETURN 1;
     END
 GO
 
@@ -46,13 +46,13 @@ AS
         IF EXISTS (SELECT 1 FROM GIAOVIEN WHERE MSGV = @MSGV)
         BEGIN
             print(N'Mã giáo viên đã tồn tại!')
-            RETURN 0
+            RETURN 0;
         END
 
         INSERT INTO GIAOVIEN (MSGV, TENGV, DIACHI, SODT, MSHH, NAMHH)
         VALUES (@MSGV, @TENGV, @DIACHI, @SODT, @MSHH, @NAMHH)
 
-        RETURN 1
+        RETURN 1;
     END
 GO
 
@@ -72,19 +72,19 @@ AS
         IF EXISTS (SELECT 1 FROM GIAOVIEN WHERE MSGV = @MSGV)
         BEGIN
             print(N'Mã giáo viên đã tồn tại!')
-            RETURN 0
+            RETURN 0;
         END
 
         IF NOT EXISTS (SELECT 1 FROM HOCHAM WHERE MSHH = @MSHH)
         BEGIN
             print(N'Mã học hàm không tồn tại!')
-            RETURN 1
+            RETURN 1;
         END
 
         INSERT INTO GIAOVIEN (MSGV, TENGV, DIACHI, SODT, MSHH, NAMHH)
         VALUES (@MSGV, @TENGV, @DIACHI, @SODT, @MSHH, @NAMHH)
 
-        RETURN 2
+        RETURN 2;
     END
 GO
 
@@ -100,14 +100,14 @@ AS
         IF NOT EXISTS (SELECT 1 FROM DETAI WHERE @MSDT = MSDT)
         BEGIN
             print(N'Mã đề tài không tồn tại!')
-            RETURN 0
+            RETURN 0;
         END
 
         UPDATE DETAI
         SET TENDT = @TENDTMOI
-        WHERE MSDT = @MSDT
+        WHERE MSDT = @MSDT;
 
-        RETURN 1
+        RETURN 1;
     END
 GO
 
@@ -124,14 +124,14 @@ AS
         IF NOT EXISTS (SELECT 1 FROM SINHVIEN WHERE MSSV = @MSSV)
         BEGIN
             print(N'Mã sinh viên không tồn tại!')
-            RETURN 0
+            RETURN 0;
         END
 
         UPDATE SINHVIEN
         SET TENSV = @TENSVMOI, DIACHI = @DIACHIMOI
-        WHERE MSSV = @MSSV
+        WHERE MSSV = @MSSV;
 
-        RETURN 1
+        RETURN 1;
     END
 GO
 
@@ -158,10 +158,10 @@ AS
 
         SELECT @CountGV = COUNT(DISTINCT MSGV)
         FROM GV_HV_CN
-        WHERE MSHV = @MSHV
+        WHERE MSHV = @MSHV;
 
         SELECT @CountGV AS SoGVThoaHocVi
-        return @CountGV
+        return @CountGV;
     END
 GO
 
@@ -177,7 +177,7 @@ AS
         IF NOT EXISTS (SELECT 1 FROM DETAI WHERE MSDT = @MSDT)
             BEGIN
                 print(N'Mã số đề tài không tồn tại!')
-                RETURN 0
+                RETURN 0;
             END
 
         SELECT @DiemTB = CAST(AVG(DIEM) AS DECIMAL(5,2))
@@ -214,7 +214,7 @@ AS
         IF @CountGV < 1
             BEGIN
                 print(N'Không tìm thấy giáo viên nào!')
-                RETURN 0
+                RETURN 0;
             END
 
         IF @CountGV > 1
@@ -226,7 +226,7 @@ AS
         FROM GIAOVIEN
         WHERE LOWER(TRIM(TENGV)) = LOWER(TRIM(@TENGV));
 
-        RETURN 1
+        RETURN 1;
     END
 GO
 
@@ -242,7 +242,7 @@ AS
         IF NOT EXISTS (SELECT 1 FROM HOIDONG WHERE MSHD = @MSHD)
             BEGIN
                 print(N'Mã hội đồng không tồn tại!')
-                RETURN 0
+                RETURN 0;
             END
 
         SELECT @DiemTB = CAST(AVG(DIEM) AS DECIMAL(5,2))
@@ -269,29 +269,24 @@ CREATE PROC usp_SoDeTaiHuongDanVaPhanBienByGV
     @TENGV nvarchar(30)
 )
 AS
-    DECLARE @CountGV INT;
     BEGIN
-        SELECT @CountGV = COUNT(*)
-        FROM GIAOVIEN
-        WHERE LOWER(TRIM(TENGV)) = LOWER(TRIM(@TENGV));
-
-        IF @CountGV < 1
+        IF NOT EXISTS (SELECT 1 FROM GIAOVIEN WHERE LOWER(TRIM(TENGV)) = LOWER(TRIM(@TENGV)))
             BEGIN
                 print(N'Không tìm thấy giáo viên nào!')
-                RETURN 0
+                RETURN 0;
             END
 
         SELECT
             gv.MSGV,
             gv.TENGV,
-            COUNT(DISTINCT h.MSDT) AS SoDetaiHuongDan,
-            COUNT(DISTINCT p.MSDT) AS SoDetaiPhanBien
+            COUNT(DISTINCT gvhd.MSDT) AS SoDetaiHuongDan,
+            COUNT(DISTINCT gvpb.MSDT) AS SoDetaiPhanBien
         FROM GIAOVIEN gv
-                 LEFT JOIN GV_HDDT h ON gv.MSGV = h.MSGV
-                 LEFT JOIN GV_PBDT p ON gv.MSGV = p.MSGV
-        WHERE LOWER(TRIM(gv.TENGV)) = LOWER(TRIM(@TENGV))
+            LEFT JOIN GV_HDDT gvhd ON gv.MSGV = gvhd.MSGV
+            LEFT JOIN GV_PBDT gvpb ON gv.MSGV = gvpb.MSGV
+        WHERE LOWER(TRIM(TENGV)) = LOWER(TRIM(@TENGV))
         GROUP BY gv.MSGV, gv.TENGV;
 
-        return 1;
+        RETURN 1;
     END
 GO
