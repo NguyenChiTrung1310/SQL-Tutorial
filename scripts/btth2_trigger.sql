@@ -71,3 +71,23 @@ AS
     END
 GO
 
+-- 4. Tạo Trigger thỏa mãn ràng buộc là một đề tài không quá 2 sinh viên. Dùng
+-- “Group by” có được không? Giải thích.
+CREATE TRIGGER trg_SVDeTai_Max2SV
+ON SV_DETAI
+FOR INSERT
+AS
+    BEGIN
+        IF EXISTS (
+            SELECT 1
+            FROM SV_DETAI
+            WHERE MSDT IN (SELECT DISTINCT MSDT FROM INSERTED)
+            GROUP BY MSDT
+            HAVING COUNT(MSSV) > 2
+        )
+        BEGIN
+            RAISERROR(N'Lỗi: Một đề tài không quá 2 sinh viên!', 16, 1);
+            ROLLBACK TRANSACTION;
+        END
+    END
+GO
