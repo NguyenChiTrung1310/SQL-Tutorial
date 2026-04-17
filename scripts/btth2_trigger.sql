@@ -49,3 +49,25 @@ AS
         END
     END
 GO
+
+-- 3. Tạo Trigger thỏa mãn ràng buộc là một hội đồng không quá 10 đề tài. Dùng
+-- “Group by” có được không? Giải thích.
+CREATE TRIGGER trg_HoiDongDT_Max10DeTai
+ON HOIDONG_DT
+FOR INSERT
+AS
+    BEGIN
+        IF EXISTS (
+            SELECT 1
+            FROM HOIDONG_DT
+            WHERE MSHD IN (SELECT DISTINCT MSHD FROM INSERTED)
+            GROUP BY MSHD
+            HAVING COUNT(MSDT) > 10
+        )
+            BEGIN
+                RAISERROR(N'Lỗi: Một hội đồng không được quản lý quá 10 đề tài!', 16, 1);
+                ROLLBACK TRANSACTION;
+            END
+    END
+GO
+
