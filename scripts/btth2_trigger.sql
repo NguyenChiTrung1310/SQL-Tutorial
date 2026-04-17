@@ -95,10 +95,6 @@ AS
     END
 GO
 
-UPDATE GIAOVIEN
-SET MSGV = 210
-WHERE MSGV = 2101
-
 -- 3. Tạo Trigger thỏa mãn ràng buộc là một hội đồng không quá 10 đề tài. Dùng
 -- “Group by” có được không? Giải thích.
 CREATE TRIGGER trg_HoiDongDT_Max10DeTai
@@ -140,3 +136,33 @@ AS
         END
     END
 GO
+
+-- 5. Tạo Trigger thỏa mãn ràng buộc là một giáo viên muốn có học hàm PGS phải là tiến sĩ.
+-- CREATE TRIGGER trg_GiaoVien_PGS_PhaiLaTienSi
+-- ON GIAOVIEN
+-- FOR INSERT, UPDATE
+-- AS
+--     BEGIN
+--         IF EXISTS (
+--             SELECT 1
+--             FROM GV_HV_CN t JOIN deleted d ON t.MSGV = d.MSGV
+--                              JOIN inserted i ON i.MSHH = 1
+--             WHERE t.MSHV
+--
+--         )
+--         BEGIN
+--
+--         END
+--     END
+-- GO
+
+
+
+
+
+
+
+
+
+
+
