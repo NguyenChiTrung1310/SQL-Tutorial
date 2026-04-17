@@ -54,7 +54,7 @@ GO
 -- “Group by” có được không? Giải thích.
 CREATE TRIGGER trg_HoiDongDT_Max10DeTai
 ON HOIDONG_DT
-FOR INSERT
+FOR INSERT, UPDATE
 AS
     BEGIN
         IF EXISTS (
@@ -75,7 +75,7 @@ GO
 -- “Group by” có được không? Giải thích.
 CREATE TRIGGER trg_SVDeTai_Max2SV
 ON SV_DETAI
-FOR INSERT
+FOR INSERT, UPDATE
 AS
     BEGIN
         IF EXISTS (
