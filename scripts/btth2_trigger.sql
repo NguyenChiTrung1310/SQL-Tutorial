@@ -138,23 +138,29 @@ AS
 GO
 
 -- 5. Tạo Trigger thỏa mãn ràng buộc là một giáo viên muốn có học hàm PGS phải là tiến sĩ.
--- CREATE TRIGGER trg_GiaoVien_PGS_PhaiLaTienSi
--- ON GIAOVIEN
--- FOR INSERT, UPDATE
--- AS
---     BEGIN
---         IF EXISTS (
---             SELECT 1
---             FROM GV_HV_CN t JOIN deleted d ON t.MSGV = d.MSGV
---                              JOIN inserted i ON i.MSHH = 1
---             WHERE t.MSHV
---
---         )
---         BEGIN
---
---         END
---     END
--- GO
+CREATE TRIGGER trg_GiaoVien_PGS_PhaiLaTienSi
+ON GIAOVIEN
+FOR INSERT, UPDATE
+AS
+    BEGIN
+        IF EXISTS (
+            SELECT 1
+            FROM INSERTED i
+            WHERE i.MSHH = 1
+            AND NOT EXISTS (
+                SELECT 1
+                FROM GV_HV_CN gvhv
+                JOIN HOCVI hv ON gvhv.MSHV = hv.MSHV
+                WHERE gvhv.MSGV = i.MSGV
+                AND hv.TENHV LIKE N'%Tiến sĩ%'
+            )
+        )
+        BEGIN
+            RAISERROR(N'Giáo viên muốn có học hàm PGS phải có học vị Tiến sĩ!', 16, 1);
+            ROLLBACK TRANSACTION;
+        END
+    END
+GO
 
 
 
