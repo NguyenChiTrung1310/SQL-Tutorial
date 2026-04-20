@@ -39,3 +39,16 @@ AS
         RETURN 'KHONGDAT';
     END
 GO
+
+-- 3. Đưa vào MSDT, trả về mã số và họ tên của các sinh viên thực hiện đề tài.
+CREATE FUNCTION fn_SinhVienDeTai(
+    @MSDT char(6)
+)
+    RETURNS TABLE
+AS
+    RETURN (
+        SELECT sv.MSSV, sv.TENSV
+        FROM SV_DETAI svdt JOIN SINHVIEN sv ON svdt.MSSV = sv.MSSV
+        WHERE svdt.MSDT = @MSDT
+    )
+GO
