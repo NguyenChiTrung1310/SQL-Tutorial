@@ -167,3 +167,76 @@ CLOSE cur_DeTai;
 DEALLOCATE  cur_DeTai;
 GO
 
+-- YÊU CẦU 2:
+-- Tạo một bảng tên là NGAN_SACH_DT(MSDT, KINH_PHI).Viết một Cursor duyệt qua danh sách đề tài.
+-- Quy tắc cấp kinh phí như sau:
+-- + Đề tài có điểm trung bình (lấy từ hàm fn_AvgDiemDeTai) >= 9.0: Cấp 10,000,000 VNĐ.
+-- + Đề tài có điểm trung bình từ 7.0 đến dưới 9.0: Cấp 7,000,000 VNĐ.
+-- + Đề tài có điểm trung bình từ 5.0 đến dưới 7.0: Cấp 5,000,000 VNĐ.
+-- + Các đề tài còn lại: Không cấp kinh phí (ghi 0).
+-- + Nếu đề tài đó có Giáo viên hướng dẫn là "Giáo sư" (MSHH = 2), hãy thưởng thêm 2,000,000 VNĐ vào kinh phí của đề tài đó.
+
+CREATE TABLE NGAN_SACH_DT (
+    MSDT char(6) PRIMARY KEY,
+    KINH_PHI MONEY
+)
+TRUNCATE TABLE NGAN_SACH_DT;
+
+DECLARE @MSDT CHAR(6);
+DECLARE @DiemTB_DeTai FLOAT;
+DECLARE @KINH_PHI MONEY;
+
+DECLARE cur_NganSach_DT CURSOR FOR
+    SELECT MSDT FROM DETAI;
+
+OPEN cur_NganSach_DT;
+
+FETCH NEXT FROM cur_NganSach_DT INTO @MSDT
+
+WHILE @@FETCH_STATUS = 0
+    BEGIN
+        SET @DiemTB_DeTai = dbo.fn_AvgDiemDeTai (@MSDT);
+
+        SET @KINH_PHI = CASE
+            WHEN @DiemTB_DeTai >=9 THEN 10000000
+            WHEN @DiemTB_DeTai >=7 THEN 7000000
+            WHEN @DiemTB_DeTai >=5 THEN 5000000
+            ELSE 0
+        END;
+
+        IF EXISTS (
+            SELECT 1
+            FROM (
+                SELECT MSGV FROM GV_UVDT WHERE MSDT = @MSDT
+                UNION
+                SELECT MSGV FROM GV_PBDT WHERE MSDT = @MSDT
+                UNION
+                SELECT MSGV FROM GV_HDDT WHERE MSDT = @MSDT
+            ) AS GV_DETAI JOIN GIAOVIEN gv ON GV_DETAI.MSGV = gv.MSGV
+            WHERE gv.MSHH = 2
+        )
+        BEGIN
+            SET @KINH_PHI = @KINH_PHI + 2000000;
+        END
+
+        INSERT INTO NGAN_SACH_DT (MSDT, KINH_PHI) VALUES (@MSDT, @KINH_PHI);
+
+        FETCH NEXT FROM cur_NganSach_DT INTO @MSDT
+    END
+
+CLOSE cur_NganSach_DT;
+DEALLOCATE cur_NganSach_DT;
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
