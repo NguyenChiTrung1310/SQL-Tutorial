@@ -58,3 +58,50 @@ BEGIN
     DEALLOCATE cur_TinhDiemTB_DeTai;
 END;
 GO
+
+-- 3. Tạo thêm cột XEPLOAI có kiểu là NVARCCHAR(20) trong bảng DETAI_DIEM,
+-- viết Cursor cập nhật kết quả xếp loại cho mỗi đề tài như sau:
+-- + "Xuất sắc": điểm trung bình từ 9 đến 10.
+-- + "Giỏi": điểm trung bình từ 8 đến 9.
+-- + "Khá": điểm trung bình từ 7 đến 8.
+-- + "Trung bình khá": điểm trung bình từ 6 đến 7.
+-- + "Trung bình": điểm trung bình từ 5 đến 6.
+-- + "Yếu": điểm trung bình từ 4 đến 5.
+-- + "Kém": điểm trung bình dưới 4.
+ALTER TABLE DETAI_DIEM
+ADD XEPLOAI NVARCHAR(20);
+
+DECLARE @KetQuaXepLoai NVARCHAR(20);
+DECLARE @MSDT CHAR(6);
+DECLARE @DiemTB_DeTai FLOAT;
+
+DECLARE cur_CapNhatXepLoai CURSOR FOR
+    SELECT MSDT, DIEMTB FROM DETAI_DIEM;
+
+OPEN cur_CapNhatXepLoai;
+
+FETCH NEXT FROM cur_CapNhatXepLoai INTO @MSDT, @DiemTB_DeTai;
+
+WHILE @@FETCH_STATUS = 0
+    BEGIN
+        SET @KetQuaXepLoai = CASE
+            WHEN @DiemTB_DeTai >= 9 THEN N'Xuất sắc'
+            WHEN @DiemTB_DeTai >= 8 THEN N'Giỏi'
+            WHEN @DiemTB_DeTai >= 7 THEN N'Khá'
+            WHEN @DiemTB_DeTai >= 6 THEN N'Trung bình khá'
+            WHEN @DiemTB_DeTai >= 5 THEN N'Trung bình'
+            WHEN @DiemTB_DeTai >= 4 THEN N'Yếu'
+            ELSE N'Kém'
+        END;
+
+        UPDATE DETAI_DIEM
+        SET XEPLOAI = @KetQuaXepLoai
+        WHERE MSDT = @MSDT;
+
+        FETCH NEXT FROM cur_CapNhatXepLoai INTO @MSDT, @DiemTB_DeTai;
+    END
+
+CLOSE cur_CapNhatXepLoai;
+
+DEALLOCATE  cur_CapNhatXepLoai;
+GO
