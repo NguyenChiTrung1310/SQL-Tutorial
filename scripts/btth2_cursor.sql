@@ -105,3 +105,65 @@ CLOSE cur_CapNhatXepLoai;
 
 DEALLOCATE  cur_CapNhatXepLoai;
 GO
+
+-- THÊM 1 SỐ CÂU HỎI THỰC TẾ DO GEMINI TẠO RA, ĐỂ LUYỆN TẬP THÊM
+
+-- YÊU CẦU 1:
+-- a. Thêm cột DANHSACH_SV kiểu NVARCHAR(MAX) vào bảng DETAI_DIEM.
+-- b. Viết một Cursor duy trì việc duyệt qua từng đề tài. Với mỗi đề tài, hãy tìm
+-- tên của tất cả sinh viên tham gia đề tài đó (từ bảng SINHVIEN và SV_DETAI),
+-- nối chúng thành một chuỗi cách nhau bởi dấu phẩy (Ví dụ: "Nguyễn Văn A, Trần Thị B").
+-- c. Cập nhật chuỗi này vào cột DANHSACH_SV tương ứng.
+
+ALTER TABLE DETAI_DIEM
+ADD DANHSACH_SV NVARCHAR(MAX)
+
+DECLARE @MSDT CHAR(6);
+DECLARE @TenSV NVARCHAR(50);
+DECLARE @ds_SV NVARCHAR(MAX);
+
+DECLARE cur_DeTai CURSOR FOR
+    SELECT MSDT FROM DETAI_DIEM;
+
+OPEN cur_DeTai;
+
+FETCH NEXT FROM cur_DeTai INTO @MSDT;
+
+WHILE @@FETCH_STATUS = 0
+    BEGIN
+        SET @ds_SV = '';
+
+        DECLARE cur_DsSinhVienTheoDeTai CURSOR FOR
+            SELECT sv.TENSV
+            FROM SINHVIEN sv
+            JOIN SV_DETAI svdt ON sv.MSSV = svdt.MSSV
+            WHERE svdt.MSDT = @MSDT;
+
+        OPEN cur_DsSinhVienTheoDeTai;
+
+        FETCH NEXT FROM cur_DsSinhVienTheoDeTai into @TenSV;
+
+        WHILE @@FETCH_STATUS = 0
+        BEGIN
+            IF @ds_SV = ''
+                SET @ds_SV = @TenSV
+            ELSE
+                SET @ds_SV = @ds_SV + ', ' + @TenSV;
+
+            FETCH NEXT FROM cur_DsSinhVienTheoDeTai into @TenSV;
+        END
+
+        CLOSE cur_DsSinhVienTheoDeTai;
+        DEALLOCATE  cur_DsSinhVienTheoDeTai;
+
+        UPDATE DETAI_DIEM
+        SET DANHSACH_SV = @ds_SV
+        WHERE MSDT = @MSDT
+
+        FETCH NEXT FROM cur_DeTai INTO @MSDT;
+    END
+
+CLOSE cur_DeTai;
+DEALLOCATE  cur_DeTai;
+GO
+
